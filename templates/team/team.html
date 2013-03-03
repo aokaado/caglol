@@ -28,7 +28,7 @@
 		<tr>
 			<td> {{ match.date }} </td>
 			<td> {{ match.teamone.name|bold_team:team }} vs. {{ match.teamtwo.name|bold_team:team }}</td>
-			<td> {{ match.teamonescore }} - {{ match.teamtwoscore }}</td>
+			<td> {{ match|decorate_score:team }}</td>
 		</tr>
 	{% endfor %}
 	</table>

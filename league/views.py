@@ -39,7 +39,7 @@ def teams(request, start=0):
 def team(request, team_id):
     team = Team.objects.get(pk=team_id)
     players = team.player.all()
-    matches = Match.objects.all().order_by('date')
+    matches = Match.objects.all().order_by('-date')
     standings = Standings.objects.filter(team=team)
     matches2 = [m for m in matches if m.teamone.id == team.id or m.teamtwo.id == team.id]
 
