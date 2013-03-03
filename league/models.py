@@ -46,7 +46,8 @@ class Match(models.Model):
     date = models.DateField(default=lambda: datetime.now(), blank=True)
 
     def __unicode__(self):
-        return self.league.short + " " + str(self.date) + " " + self.teamone.short + " vs " + self.teamtwo.short
+        status = " #Unplayed#" if not self.has_winner() else ""
+        return self.league.short + " " + str(self.date) + " " + self.teamone.short + " vs " + self.teamtwo.short + status
 
     def has_winner(self):
         if self.teamonescore > self.teamtwoscore:
@@ -64,21 +65,21 @@ class Match(models.Model):
         loseteam = Standings.objects.get(league=self.league, team=self.loser)
         #print "Applying standingsupdate to "+str(winteam)+" and "+str(loseteam)
         winteam.wins += 1
-        winteam.score = winteam.get_score()
+        winteam.calc_score()
         loseteam.losses += 1
-        loseteam.score = loseteam.get_score()
+        loseteam.calc_score()
         winteam.save()
         loseteam.save()
 
     def revert(self, oldmatch):
-        #print "reverting "+str(oldmatch.winner)+" and "+str(oldmatch.loser)
+        #print "Reverting standingsupdate on"+str(oldmatch.winner)+" and "+str(oldmatch.loser)
         winteam = Standings.objects.get(league=self.league, team=oldmatch.winner)
         loseteam = Standings.objects.get(league=self.league, team=oldmatch.loser)
         winteam.wins -= 1
-        winteam.score = winteam.get_score()
+        winteam.calc_score()
         winteam.save()
         loseteam.losses -= 1
-        loseteam.score = loseteam.get_score()
+        loseteam.calc_score()
         loseteam.save()
 
     def update_teams(self):
@@ -117,7 +118,6 @@ class Match(models.Model):
 class League(models.Model):
     name = models.CharField(max_length=30)
     short = models.CharField(max_length=10)
-    #team = models.ManyToManyField(Team)
 
     def __unicode__(self):
         return self.name
@@ -130,6 +130,8 @@ class Standings(models.Model):
     losses = models.IntegerField(default=0)
     score = models.IntegerField(default=0)
 
+    # Should not be neccesary to run this, it's here for initializing the db
+    # and as a backup if the scorecount get's inconsistent
     def update(self):
         start = time.clock()
         matches = Match.objects.filter(league=self.league)
@@ -141,15 +143,15 @@ class Standings(models.Model):
                 self.wins += 1
             elif (match.teamone == self.team or match.teamtwo == self.team) and not match.teamonescore == match.teamtwoscore:
                 self.losses += 1
-        self.score = self.get_score()
+        self.calc_score()
         self.save()
         end = time.clock()
         print "update:"+str(self)+" "+str(end-start)
 
-    def get_score(self):
+    def calc_score(self):
         if self.wins == 0:
-            return 0
-        return self.wins/(self.wins + self.losses)*100
+            self.score = 0
+        self.score = self.wins/(self.wins + self.losses)*100
 
     def __unicode__(self):
         return self.league.name+"."+self.team.name
