@@ -1,0 +1,155 @@
+from __future__ import division
+from django.db import models
+from datetime import datetime
+import time
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
+from smart_selects.db_fields import ChainedForeignKey
+
+
+class Player(models.Model):
+    ROLES = (
+        ('t', 'Top'),
+        ('j', 'Jungle'),
+        ('m', 'Mid'),
+        ('a', 'AD-Carry'),
+        ('s', 'Support'),
+        ('b', 'Sub'),
+        ('u', 'Unknown'),
+    )
+    name = models.CharField(max_length=20, unique=True)
+    realname = models.CharField(max_length=60, blank=True)
+    role = models.CharField(max_length=1, choices=ROLES, default='u')
+
+    def __unicode__(self):
+        return self.name
+
+
+class Team(models.Model):
+    name = models.CharField(max_length=30)
+    short = models.CharField(max_length=10, unique=True)
+    player = models.ManyToManyField(Player)
+
+    def is_valid(self):
+        return self.player.count() >= 5
+
+    def __unicode__(self):
+        return self.name
+
+
+class Match(models.Model):
+    league = models.ForeignKey('League')
+    teamone = ChainedForeignKey(Team, middle='Standings', related_name="match_team_one", chained_field='league', chained_model_field='league', show_all=False)
+    teamtwo = ChainedForeignKey(Team, middle='Standings', related_name="match_team_two", chained_field='league', chained_model_field='league', show_all=False)
+    teamonescore = models.IntegerField(default=0)
+    teamtwoscore = models.IntegerField(default=0)
+    date = models.DateField(default=lambda: datetime.now(), blank=True)
+
+    def __unicode__(self):
+        return self.league.short + " " + str(self.date) + " " + self.teamone.short + " vs " + self.teamtwo.short
+
+    def has_winner(self):
+        if self.teamonescore > self.teamtwoscore:
+            self.winner = self.teamone
+            self.loser = self.teamtwo
+            return True
+        elif self.teamtwoscore > self.teamonescore:
+            self.winner = self.teamtwo
+            self.loser = self.teamone
+            return True
+        return False
+
+    def apply_update(self):
+        winteam = Standings.objects.get(league=self.league, team=self.winner)
+        loseteam = Standings.objects.get(league=self.league, team=self.loser)
+        #print "Applying standingsupdate to "+str(winteam)+" and "+str(loseteam)
+        winteam.wins += 1
+        winteam.score = winteam.get_score()
+        loseteam.losses += 1
+        loseteam.score = loseteam.get_score()
+        winteam.save()
+        loseteam.save()
+
+    def revert(self, oldmatch):
+        #print "reverting "+str(oldmatch.winner)+" and "+str(oldmatch.loser)
+        winteam = Standings.objects.get(league=self.league, team=oldmatch.winner)
+        loseteam = Standings.objects.get(league=self.league, team=oldmatch.loser)
+        winteam.wins -= 1
+        winteam.score = winteam.get_score()
+        winteam.save()
+        loseteam.losses -= 1
+        loseteam.score = loseteam.get_score()
+        loseteam.save()
+
+    def update_teams(self):
+        oldscore = None
+        try:
+            oldscore = Match.objects.get(pk=self.id)
+        except:
+            # This is a new match, just apply results
+            if self.has_winner():
+                self.apply_update()
+            return
+
+        if oldscore.has_winner():
+            if self.has_winner() and oldscore.winner == self.winner:
+                # Same winner
+                None
+            else:
+                # Revert last then add new if there was a winner
+                self.revert(oldscore)
+                if self.has_winner():
+                    self.apply_update()
+        elif not oldscore.has_winner() and self.has_winner():
+                self.apply_update()
+
+    def save(self, *args, **kwargs):
+        self.update_teams()
+        super(Match, self).save(*args, **kwargs)
+
+    @receiver(pre_delete)
+    def delete_match(sender, instance, **kwargs):
+        if isinstance(instance, Match):
+            if instance.has_winner():
+                instance.revert(instance)
+
+
+class League(models.Model):
+    name = models.CharField(max_length=30)
+    short = models.CharField(max_length=10)
+    #team = models.ManyToManyField(Team)
+
+    def __unicode__(self):
+        return self.name
+
+
+class Standings(models.Model):
+    league = models.ForeignKey(League)
+    team = models.ForeignKey(Team)
+    wins = models.IntegerField(default=0)
+    losses = models.IntegerField(default=0)
+    score = models.IntegerField(default=0)
+
+    def update(self):
+        start = time.clock()
+        matches = Match.objects.filter(league=self.league)
+        self.wins = 0
+        self.losses = 0
+        self.score_p = 0
+        for match in matches:
+            if (match.teamone == self.team and match.teamonescore > match.teamtwoscore) or (match.teamtwo == self.team and match.teamtwoscore > match.teamonescore):
+                self.wins += 1
+            elif (match.teamone == self.team or match.teamtwo == self.team) and not match.teamonescore == match.teamtwoscore:
+                self.losses += 1
+        self.score = self.get_score()
+        self.save()
+        end = time.clock()
+        print "update:"+str(self)+" "+str(end-start)
+
+    def get_score(self):
+        if self.wins == 0:
+            return 0
+        return self.wins/(self.wins + self.losses)*100
+
+    def __unicode__(self):
+        return self.league.name+"."+self.team.name

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Recent Matches</h2>
+<table cellpadding='8px'>
+{% for match in matches %}
+	<tr>
+		<td> Match {{ match.id }} </td>
+		<td> {{ match.date }} </td>
+		<td> {{ match.teamone.name }} vs. {{ match.teamtwo.name }}</td>
+		<td> {{ match.teamonescore }} - {{ match.teamtwoscore }}</td>
+	</tr>
+{% endfor %}
+</table>
+{% endblock %}

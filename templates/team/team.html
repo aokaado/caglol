@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load league_extras %}
+
+{% block content %}
+{% if team %}
+	<h1>Team: {{ team.name }} ({{ team.short }})</h1>
+	{% if players %}
+		<b>Players:</b>
+		<ul>
+		{% for player in players %}
+			<li><a href="/player/{{ player.id }}/">{{ player.name }}</a> - {{ player.get_role_display }}</li>
+		{% endfor %}
+		</ul>
+	{% else %}
+		<p> No players on this team. </p>
+	{% endif %}
+	{% if standings %}
+		<b>Score:</b><br/>
+		{% for standing in standings %}
+			 <a href="/league/{{standing.league.id}}">{{ standing.league.name}}</a>: {{standing.wins}} - {{standing.losses}} [{{standing.score}}%]<br/>
+		{% endfor %}
+	<br/>
+	{% endif %}
+	<h2>Recent Matches</h2>
+	<table cellpadding='8px'>
+	{% for match in matches %}
+		<tr>
+			<td> {{ match.date }} </td>
+			<td> {{ match.teamone.name|bold_team:team }} vs. {{ match.teamtwo.name|bold_team:team }}</td>
+			<td> {{ match.teamonescore }} - {{ match.teamtwoscore }}</td>
+		</tr>
+	{% endfor %}
+	</table>
+{% endif %}
+{% endblock %}

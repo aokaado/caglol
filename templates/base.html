@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load staticfiles %}
+    <link rel="stylesheet" href="{% static "style.css" %}" />
+    <title>{% block title %}CasualGaming League of Legends Portal{% endblock %}</title>
+</head>
+
+<body><div id='topbar'><a href="/admin/">Admin</a></div>
+	{% block header %}
+    <h1>Welcome to the CasualGaming League of Legends Portal</h1>
+    {% endblock %}
+    <div id="sidebar">
+        {% block sidebar %}
+        <ul id='nav'>
+            <li><a href="/">Home</a></li>
+            <li><a href="/league/">Leagues</a></li>
+            <li><a href="/teams/">Teams</a></li>
+            <li><a href="/player/">Players</a></li>
+            <li><a href="/match/">Matches</a></li>
+        </ul>
+        {% endblock %}
+    </div>
+
+    <div id="content">
+        {% block content %}Content here{% endblock %}
+    </div>
+
+    <div id="footer">
+    	{% block footer %}
+         <a href="http://www.studlan.no">Studlan</a>
+          - 
+         <a href="http://www.casualgaming.no">Casual Gaming</a><br/>
+         Aokaado Enterprises &copy; 2013
+         {% endblock %}
+    </div>
+</body>
+</html>

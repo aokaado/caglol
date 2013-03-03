@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Match:</h2>
+<table cellpadding='8px'>
+	<tr>
+		<td> {{ match.date }} </td>
+		<td> {{ match.teamone.name }} vs. {{ match.teamtwo.name }}</td>
+		<td> {{ match.teamonescore }} - {{ match.teamtwoscore }}</td>
+	</tr>
+</table>
+{% endblock %}

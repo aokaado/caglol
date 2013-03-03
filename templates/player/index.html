@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Players</h2>
+{% if players %}
+	<ul>
+	{% for player in players %}
+		<li><a href="/player/{{ player.id }}/">{{ player.name }}</a></li>
+	{% endfor %}
+	</ul>
+{% else %}
+	<p> No players</p>
+{% endif %}
+{% endblock %}
