@@ -1,5 +1,6 @@
 {% extends "base.html"  %}
 
+{% block header %}Teams{% endblock %}
 {% block content %}
 {% if teams %}
 	<ul>
@@ -10,6 +11,6 @@
 {% else %}
 	<p> No teams</p>
 {% endif %}
-<a href="/teams/{{ i|add:-1 }}/">Prev Page</a>
-<a href="/teams/{{ i|add:1 }}/">Next Page</a>
+<a class="btn" href="/teams/{{ i|add:-1 }}/">Prev Page</a>
+<a class="btn" href="/teams/{{ i|add:1 }}/">Next Page</a>
 {% endblock %}

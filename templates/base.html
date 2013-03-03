@@ -1,32 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% load staticfiles %}
     <link rel="stylesheet" href="{% static "style.css" %}" />
+    <!-- Bootstrap -->
+    <link href="{% static "bootstrap/css/bootstrap.min.css" %}" rel="stylesheet" media="screen">
+    <link href="{% static "bootstrap/css/bootstrap-responsive.css" %}" rel="stylesheet">
     <title>{% block title %}CasualGaming League of Legends Portal{% endblock %}</title>
 </head>
 
-<body><div id='topbar'><a href="/admin/">Admin</a></div>
-	{% block header %}
-    <h1>Welcome to the CasualGaming League of Legends Portal</h1>
-    {% endblock %}
-    <div id="sidebar">
-        {% block sidebar %}
-        <ul id='nav'>
-            <li><a href="/">Home</a></li>
-            <li><a href="/league/">Leagues</a></li>
-            <li><a href="/teams/">Teams</a></li>
-            <li><a href="/player/">Players</a></li>
-            <li><a href="/match/">Matches</a></li>
-        </ul>
-        {% endblock %}
+<body>
+<div class='container'>
+	
+    <div class="masthead">
+        <h2>CasualGaming League of Legends Portal</h2>
+        
+        <div class="navbar">
+            <div class="navbar-inner">
+                <div class="container">
+                    <ul class='nav'>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/league/">Leagues</a></li>
+                        <li><a href="/teams/">Teams</a></li>
+                        <li><a href="/player/">Players</a></li>
+                        <li><a href="/match/">Matches</a></li>
+                        <li class="pull-right"><a href="/admin/">Admin</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
+    <h4 class="muted">{% block header %}{% endblock %}</h4>
 
     <div id="content">
         {% block content %}Content here{% endblock %}
     </div>
 
-    <div id="footer">
+    <div class="footer">
+        <hr/>
     	{% block footer %}
         <a href="http://www.studlan.no">Studlan</a>
          - 
@@ -36,5 +49,7 @@
         Aokaado Enterprises &copy; 2013
         {% endblock %}
     </div>
+</div> <!-- container -->
+    <script src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
 </body>
 </html>

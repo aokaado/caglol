@@ -6,11 +6,12 @@
 	<h1>Team: {{ team.name }} ({{ team.short }})</h1>
 	{% if players %}
 		<b>Players:</b>
-		<ul>
+		<dl class="dl-horizontal">
 		{% for player in players %}
-			<li><a href="/player/{{ player.id }}/">{{ player.name }}</a> - {{ player.get_role_display }}</li>
+			<dt><a href="/player/{{ player.id }}/">{{ player.name }}</a></dt>
+			<dd>{{ player.get_role_display }}</dd>
 		{% endfor %}
-		</ul>
+		</dl>
 	{% else %}
 		<p> No players on this team. </p>
 	{% endif %}

@@ -2,7 +2,7 @@
 {% load humanize %}
 
 {% block header %}
-    <h1>{{ league.name }}</h1>
+    {{ league.name }}
 {% endblock %}
 
 {% block content %}
@@ -21,6 +21,7 @@
 	{% endfor %}
 	</table>
 {% endif %}
+<hr/>
 <h2>Recent Matches</h2>
 <table cellpadding='8px'>
 {% for match in matches %}
