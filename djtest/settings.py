@@ -8,9 +8,7 @@ BASE_DIR = os.path.join(BASE_DIR, "..")
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
-ADMINS = (
-    ('Skotsj', 'webmaster@skotsjedal.com'),
-)
+ADMINS = dbpw.admins
 
 MANAGERS = ADMINS
 
@@ -74,7 +72,7 @@ STATICFILES_FINDERS = (
 )
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = '-&amp;kk9toce-8#@7k!z+-@dmgmcn3_9^_zckydwpd_)5x7471u=@'
+SECRET_KEY = dbpw.secretkey
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
