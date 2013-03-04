@@ -6,19 +6,34 @@
 {% endblock %}
 
 {% block content %}
-
+{% load staticfiles %}
 {% if standings %}
-	<table border='1px' cellpadding='8px'>
-        <tr><td>Pos</td><td>Team</td><td>#Played</td><td>Score</td><td>Winrate</td></tr>
-	{% for standing in standings %}
-		<tr>
-			<td>{{ forloop.counter }}</td>
-			<td><a href="/team/{{ standing.team.id }}/">{{ standing.team.name }}</a></td>
-                        <td>{{standing.wins|add:standing.losses}}</td>
-			<td> {{ standing.wins }} - {{ standing.losses }}</td>
-                        <td> {{ standing.score }}%</td>
-		</tr>
-	{% endfor %}
+	<table class='table'>
+        <thead>
+        	<tr>
+        		<td>Pos</td>
+        		<td>Team</td>
+        		<td>#Played</td>
+        		<td>Score</td>
+        		<td>Winrate</td>
+        	</tr>
+        </thead>
+        <tbody>
+			{% for standing in standings %}
+				<tr>
+					<td>{{ forloop.counter }}</td>
+					<td>
+					{% if standing.team.icon %}
+					<img src="/media/{{ standing.team.icon }}" />
+					{% endif %}
+					<a href="/team/{{ standing.team.id }}/">{{ standing.team.name }}</a></td>
+					
+		                        <td>{{standing.wins|add:standing.losses}}</td>
+					<td> {{ standing.wins }} - {{ standing.losses }}</td>
+		                        <td> {{ standing.score }}%</td>
+				</tr>
+			{% endfor %}
+		</tbody>
 	</table>
 {% endif %}
 <hr/>

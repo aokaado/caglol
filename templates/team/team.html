@@ -4,17 +4,22 @@
 {% block content %}
 {% if team %}
 	<h1>Team: {{ team.name }} ({{ team.short }})</h1>
-	{% if players %}
-		<b>Players:</b>
-		<dl class="dl-horizontal">
-		{% for player in players %}
-			<dt><a href="/player/{{ player.id }}/">{{ player.name }}</a></dt>
-			<dd>{{ player.get_role_display }}</dd>
-		{% endfor %}
-		</dl>
-	{% else %}
-		<p> No players on this team. </p>
-	{% endif %}
+	<div class="row">
+		<div class="span4">
+			<b>Players:</b>
+			<dl class="dl-horizontal">
+			{% for player in players %}
+				<dt><a href="/player/{{ player.id }}/">{{ player.name }}</a></dt>
+				<dd>{{ player.get_role_display }}</dd>
+			{% endfor %}
+			</dl>
+		</div>
+		<div class="span8">
+			{% if team.icon %}
+				<img class="teamimg" src="/media/{{ team.icon }}" />
+			{% endif %}
+		</div>
+	</div>
 	{% if standings %}
 		<b>Score:</b><br/>
 		{% for standing in standings %}

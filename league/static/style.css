@@ -52,3 +52,12 @@ body {
 	border-right: 0;
 	border-radius: 0 3px 3px 0;
 }
+
+td > img {
+	max-width: 25px;
+}
+
+img.teamimg {
+	padding-top: 35px;
+	max-width: 150px;
+}

@@ -28,6 +28,7 @@ class Player(models.Model):
 class Team(models.Model):
     name = models.CharField(max_length=30)
     short = models.CharField(max_length=10, unique=True)
+    icon = models.FileField(upload_to="team_icons", max_length=50, null=True)
     player = models.ManyToManyField(Player)
 
     def is_valid(self):
