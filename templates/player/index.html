@@ -2,13 +2,11 @@
 
 {% block header %}Players{% endblock %}
 {% block content %}
-{% if players %}
 	<ul>
 	{% for player in players %}
 		<li><a href="/player/{{ player.id }}/">{{ player.name }}</a></li>
 	{% endfor %}
 	</ul>
-{% else %}
-	<p> No players</p>
-{% endif %}
+	<a class="btn" href="/players/{{ i|add:-1 }}/">Prev Page</a>
+	<a class="btn" href="/players/{{ i|add:1 }}/">Next Page</a>
 {% endblock %}

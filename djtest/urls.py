@@ -15,13 +15,15 @@ urlpatterns = patterns('',
     url(r'^league/$', 'league.views.leagues'),
     url(r'^league/(?P<league_id>\d+)/$', 'league.views.league'),
 
-    url(r'^player/$', 'league.views.players'),
+    url(r'^players/$', 'league.views.players'),
+    url(r'^players/(?P<start>\d+)/$', 'league.views.players'),
     url(r'^player/(?P<player_id>\d+)/$', 'league.views.player'),
 
     url(r'^teams/$', 'league.views.teams'),
     url(r'^teams/(?P<start>\d+)/$', 'league.views.teams'),
     url(r'^team/(?P<team_id>\d+)/$', 'league.views.team'),
-    url(r'^match/$', 'league.views.matches'),
+    url(r'^matches/$', 'league.views.matches'),
+    url(r'^matches/(?P<start>\d+)/$', 'league.views.matches'),
     url(r'^match/(?P<match_id>\d+)/$', 'league.views.match'),
 
     # Uncomment the admin/doc line below to enable admin documentation:

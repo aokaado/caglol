@@ -54,7 +54,8 @@ body {
 }
 
 td > img {
-	max-width: 25px;
+	max-width: 30px;
+	max-height: 35px;
 }
 
 img.teamimg {

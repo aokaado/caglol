@@ -51,7 +51,7 @@ def matches(request, start=0):
     stride = 10
     matches = Match.objects.all().order_by('date')[start*stride:start*stride + stride]
 
-    return render_to_response('match/index.html', {'matches': matches})
+    return render_to_response('match/index.html', {'matches': matches, 'i': start})
 
 
 def match(request, match_id):

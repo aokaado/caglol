@@ -2,14 +2,16 @@
 
 {% block header %}Recent Matches{% endblock %}
 {% block content %}
-<table cellpadding='8px'>
-{% for match in matches %}
-	<tr>
-		<td> Match {{ match.id }} </td>
-		<td> {{ match.date }} </td>
-		<td> {{ match.teamone.name }} vs. {{ match.teamtwo.name }}</td>
-		<td> {{ match.teamonescore }} - {{ match.teamtwoscore }}</td>
-	</tr>
-{% endfor %}
-</table>
+	<table cellpadding='8px'>
+	{% for match in matches %}
+		<tr>
+			<td> Match {{ match.id }} </td>
+			<td> {{ match.date }} </td>
+			<td> {{ match.teamone.name }} vs. {{ match.teamtwo.name }}</td>
+			<td> {{ match.teamonescore }} - {{ match.teamtwoscore }}</td>
+		</tr>
+	{% endfor %}
+	</table>
+	<a class="btn" href="/matches/{{ i|add:-1 }}/">Prev Page</a>
+	<a class="btn" href="/matches/{{ i|add:1 }}/">Next Page</a>
 {% endblock %}
