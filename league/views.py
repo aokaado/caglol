@@ -25,7 +25,8 @@ def players(request, start=0):
 
 def player(request, player_id):
     player = Player.objects.get(pk=player_id)
-    return render_to_response('player/player.html', {'player': player})
+    teams = Team.objects.filter(player=player_id)
+    return render_to_response('player/player.html', {'player': player, 'teams': teams})
 
 
 def teams(request, start=0):

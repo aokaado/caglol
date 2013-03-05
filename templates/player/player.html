@@ -1,6 +1,14 @@
 {% extends "base.html" %}
 
 {% block content %}
-Player {{ player.id }}:  {{ player.name }}
+<b><i class="icon-user"></i>Player:</b> {{ player.name }}
 <br/><br/>
+{% if teams %}
+	<b>Member of:</b>
+	<ul class="list">
+	{% for team in teams %}
+		<li><a href="/team/{{ team.id }}">{{ team.name }}</a></li>
+	{% endfor%}
+	</ul>
+{% endif %}
 {% endblock %}

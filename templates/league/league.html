@@ -27,10 +27,9 @@
 					<img src="/media/{{ standing.team.icon }}" />
 					{% endif %}
 					<a href="/team/{{ standing.team.id }}/">{{ standing.team.name }}</a></td>
-					
-		                        <td>{{standing.wins|add:standing.losses}}</td>
-					<td> {{ standing.wins }} - {{ standing.losses }}</td>
-		                        <td> {{ standing.score }}%</td>
+					<td>{{standing.wins|add:standing.losses}}</td>
+					<td>{{ standing.wins }} - {{ standing.losses }}</td>
+		            <td>{{ standing.score }}%</td>
 				</tr>
 			{% endfor %}
 		</tbody>
