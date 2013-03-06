@@ -6,8 +6,9 @@
     {% load staticfiles %}
     <link rel="stylesheet" href="{% static "style.css" %}" />
     <!-- Bootstrap -->
-    <link href="{% static "bootstrap/css/bootstrap.min.css" %}" rel="stylesheet" media="screen">
+    <link href="{% static "bootstrap/css/bootstrap.css" %}" rel="stylesheet" media="screen">
     <link href="{% static "bootstrap/css/bootstrap-responsive.css" %}" rel="stylesheet">
+    <!--<link rel="stylesheet" href="{% static "color.css" %}" />-->
     <title>{% block title %}CasualGaming League of Legends Portal{% endblock %}</title>
 </head>
 
@@ -50,6 +51,8 @@
         {% endblock %}
     </div>
 </div> <!-- container -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
+    {% block scripts %}{% endblock %}
 </body>
 </html>

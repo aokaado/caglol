@@ -119,6 +119,8 @@ class Match(models.Model):
 class League(models.Model):
     name = models.CharField(max_length=30)
     short = models.CharField(max_length=10)
+    flavor = models.TextField()
+    splash = models.FileField(upload_to="leagues")
 
     def __unicode__(self):
         return self.name

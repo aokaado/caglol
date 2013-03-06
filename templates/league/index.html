@@ -1,14 +1,45 @@
 {% extends "base.html"  %}
 
-{% block header %}Current Leageus{% endblock %}
+{% block header %}{% endblock %}
 {% block content %}
-{% if leagues %}
+
+<div id="league_carousel" class="carousel slide">
+  <ol class="carousel-indicators">
+  	{% for league in leagues %}
+    <li data-target="#league_carousel" data-slide-to="{{ forloop.counter|add:-1 }}"></li>
+    {% endfor %}
+  </ol>
+  <!-- Carousel items -->
+  <div class="carousel-inner">
+    {% for league in leagues %}
+    <div class="item">
+    	<a href="/league/{{ league.id }}/"><img src="/media/{{ league.splash }}" alt=""/></a>
+        <div class="carousel-caption">
+          <a href="/league/{{ league.id }}/"><h4>{{ league.name }}</h4></a>
+          <p>{{ league.flavor }}</p>
+		</div>
+	</div>
+  	{% endfor %}
+  </div>
+  <!-- Carousel nav -->
+  <a class="carousel-control left" href="#league_carousel" data-slide="prev">&lsaquo;</a>
+  <a class="carousel-control right" href="#league_carousel" data-slide="next">&rsaquo;</a>
+</div>
+<!--
 	<ul>
 	{% for league in leagues %}
 		<li><a href="/league/{{ league.id }}/">{{ league.name }}</a></li>
 	{% endfor %}
 	</ul>
-{% else %}
-	<p> No leagues</p>
-{% endif %}
+-->
+
+{% endblock %}
+{% block scripts %}
+<script type="text/javascript">
+$("div.carousel-inner div:first-child").addClass('active');
+$("ol.carousel-indicators li:first-child").addClass('active');
+$('.carousel').carousel({
+  interval: 4000
+})
+</script>
 {% endblock %}
