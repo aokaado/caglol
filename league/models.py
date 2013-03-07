@@ -120,7 +120,7 @@ class League(models.Model):
     name = models.CharField(max_length=30)
     short = models.CharField(max_length=10)
     flavor = models.TextField()
-    splash = models.FileField(upload_to="leagues")
+    splash = models.FileField(upload_to="leagues", default="leagues/default.png")
 
     def __unicode__(self):
         return self.name
@@ -154,7 +154,8 @@ class Standings(models.Model):
     def calc_score(self):
         if self.wins == 0:
             self.score = 0
-        self.score = self.wins/(self.wins + self.losses)*100
+        else:
+            self.score = self.wins/(self.wins + self.losses)*100
 
     def __unicode__(self):
         return self.league.name+"."+self.team.name
