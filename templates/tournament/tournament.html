@@ -1,29 +1,42 @@
+{% extends "base.html"  %}
 {% load tour_extras %}
-{{ tournament.name }}
-<br>
-<br>
-<div style="width: 1000px">
-{% for tier in wmatchups %}
-<div style="width: 120px; float: left;">
-	
-	{% for i in forloop.counter|get_range_l %}
-		<div>&nbsp;</div>
-	{% endfor %}
+{% block header %}{{ tournament.name }}{% endblock %}
 
-	{% for matchup in tier %}
-		<table>
-		<tr>
-			<td>{{ matchup.teamonescore }}</td>
-			<td>{{ matchup.teamone }}</td>
-		</tr>
-		<tr>
-			<td>{{ matchup.teamtwoscore }}</td>
-			<td>{{ matchup.teamtwo }}</td>
-		</tr>
-		</table>
-		<div>&nbsp;</div>
+{% block content %}
+	<div class="row">
+	{% for tier in wmatchups %}
+	<div class="span2">
+		
+		{% for i in forloop.counter|get_range_l %}
+			<div class="row"><div class="span1">&nbsp;</div></div>
+		{% endfor %}
+
+		{% for matchup in tier %}
+			<table class="table table-bordered table-condensed">
+			<tr class="teamrow" alt="{{ matchup.teamone.id }}">
+				<td>{{ matchup.teamonescore }}</td>
+				<td>{{ matchup.teamone }}</td>
+			</tr>
+			<tr class="teamrow" alt="{{ matchup.teamtwo.id }}">
+				<td>{{ matchup.teamtwoscore }}</td>
+				<td>{{ matchup.teamtwo }}</td>
+			</tr>
+			</table>
+		{% endfor %}
+	</div>
 	{% endfor %}
-</div>
-<div style="width: 30px; float: left;">&nbsp;</div>
-{% endfor %}
-</div>
+{% endblock %}
+{% block scripts %}
+<script type="text/javascript">
+$("tr.teamrow").click(function(){
+	var num = $(this).attr('alt');
+	if (num)
+		window.location = "/team/"+num;
+});
+$("tr.teamrow").hover(function() {
+    $(this).css('cursor','pointer');
+}, function() {
+    $(this).css('cursor','auto');
+});
+</script>
+{% endblock %}
