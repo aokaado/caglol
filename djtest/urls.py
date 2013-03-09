@@ -26,6 +26,10 @@ urlpatterns = patterns('',
     url(r'^matches/(?P<start>\d+)/$', 'league.views.matches'),
     url(r'^match/(?P<match_id>\d+)/$', 'league.views.match'),
 
+    # Tournament app
+    url(r'^tournament/$', 'tournament.views.tournaments'),
+    url(r'^tournament/(?P<tournament_id>\d+)/$', 'tournament.views.tournament'),
+
     # Uncomment the admin/doc line below to enable admin documentation:
     #url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
 
@@ -39,7 +43,6 @@ urlpatterns = patterns('',
 urlpatterns += staticfiles_urlpatterns()
 if settings.DEBUG:
     urlpatterns += patterns('',
-        url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {
-            'document_root': settings.MEDIA_ROOT,
-    }),
+        url(r'^media/(?P<path>.*)$', 'django.views.static.serve',
+            {'document_root': settings.MEDIA_ROOT}),
     )

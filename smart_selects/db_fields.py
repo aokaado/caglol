@@ -21,14 +21,19 @@ class ChainedForeignKey(ForeignKey):
 
         if middle is not None:
             if isinstance(middle, basestring):
-                self.middle = middle
+                self.mapp_name, self.middle_name = middle.split('.')
             else:
-                self.middle = middle._meta.object_name
+                self.mapp_name = middle._meta.app_label
+                self.middle_name = middle._meta.object_name
+        else:
+            self.middle_name = None
+            self.mapp_name = None
 
         self.chain_field = chained_field
         self.model_field = chained_model_field
         self.show_all = show_all
         self.auto_choose = auto_choose
+
         ForeignKey.__init__(self, to, **kwargs)
 
     def formfield(self, **kwargs):
@@ -38,7 +43,8 @@ class ChainedForeignKey(ForeignKey):
             'to_field_name': self.rel.field_name,
             'app_name': self.app_name,
             'model_name': self.model_name,
-            'middle': self.middle,
+            'mapp_name': self.mapp_name,
+            'middle_name': self.middle_name,
             'chain_field': self.chain_field,
             'model_field': self.model_field,
             'show_all': self.show_all,

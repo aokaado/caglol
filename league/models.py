@@ -40,8 +40,8 @@ class Team(models.Model):
 
 class Match(models.Model):
     league = models.ForeignKey('League')
-    teamone = ChainedForeignKey(Team, middle='Standings', related_name="match_team_one", chained_field='league', chained_model_field='league', show_all=False)
-    teamtwo = ChainedForeignKey(Team, middle='Standings', related_name="match_team_two", chained_field='league', chained_model_field='league', show_all=False)
+    teamone = ChainedForeignKey('league.team', middle='league.standings', related_name="match_team_one", chained_field='league', chained_model_field='league', show_all=False)
+    teamtwo = ChainedForeignKey('league.team', middle='league.standings', related_name="match_team_two", chained_field='league', chained_model_field='league', show_all=False)
     teamonescore = models.IntegerField(default=0)
     teamtwoscore = models.IntegerField(default=0)
     date = models.DateField(default=lambda: datetime.now(), blank=True)
@@ -140,12 +140,13 @@ class Standings(models.Model):
         matches = Match.objects.filter(league=self.league)
         self.wins = 0
         self.losses = 0
-        self.score_p = 0
+
         for match in matches:
             if (match.teamone == self.team and match.teamonescore > match.teamtwoscore) or (match.teamtwo == self.team and match.teamtwoscore > match.teamonescore):
                 self.wins += 1
             elif (match.teamone == self.team or match.teamtwo == self.team) and not match.teamonescore == match.teamtwoscore:
                 self.losses += 1
+
         self.calc_score()
         self.save()
         end = time.clock()
@@ -159,3 +160,6 @@ class Standings(models.Model):
 
     def __unicode__(self):
         return self.league.name+"."+self.team.name
+
+    class Meta:
+        unique_together = ('league', 'team')

@@ -19,10 +19,11 @@ else:
 
 
 class ChainedSelect(Select):
-    def __init__(self, app_name, model_name, middle, chain_field, model_field, show_all, auto_choose, manager=None, *args, **kwargs):
+    def __init__(self, app_name, model_name, mapp_name, middle_name, chain_field, model_field, show_all, auto_choose, manager=None, *args, **kwargs):
         self.app_name = app_name
         self.model_name = model_name
-        self.middle = middle
+        self.mapp_name = mapp_name
+        self.middle_name = middle_name
         self.chain_field = chain_field
         self.model_field = model_field
         self.show_all = show_all
@@ -49,9 +50,10 @@ class ChainedSelect(Select):
             view_name = "chained_filter_all"
         else:
             view_name = "chained_filter"
-        kwargs = {'app': self.app_name, 'model': self.model_name, 'field': self.model_field, 'value': "1"}
-        if self.middle is not None:
-            kwargs = {'app': self.app_name, 'model': self.model_name, 'middle': self.middle, 'field': self.model_field, 'value': "1"}
+        if self.middle_name is None:
+            kwargs = {'app': self.app_name, 'model': self.model_name, 'field': self.model_field, 'value': "1"}
+        else:
+            kwargs = {'app': self.app_name, 'model': self.model_name, 'mapp': self.mapp_name, 'middle': self.middle_name, 'field': self.model_field, 'value': "1"}
         #print kwargs
         if self.manager is not None:
             kwargs.update({'manager': self.manager})

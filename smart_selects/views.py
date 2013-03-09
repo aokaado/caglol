@@ -24,10 +24,10 @@ def filterchain(request, app, model, field, value, manager=None):
     return HttpResponse(json, mimetype='application/json')
 
 
-def filterchain_m2m(request, app, model, middle, field, value, manager=None):
+def filterchain_m2m(request, app, model, mapp, middle, field, value, manager=None):
     #middle = 'Standings'
     Model = get_model(app, model)
-    Middle = get_model(app, middle)
+    Middle = get_model(mapp, middle)
     if manager is not None:
         raise HttpResponseServerError
     if value == '0':

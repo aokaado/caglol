@@ -1,0 +1,29 @@
+{% load tour_extras %}
+{{ tournament.name }}
+<br>
+<br>
+<div style="width: 1000px">
+{% for tier in wmatchups %}
+<div style="width: 120px; float: left;">
+	
+	{% for i in forloop.counter|get_range_l %}
+		<div>&nbsp;</div>
+	{% endfor %}
+
+	{% for matchup in tier %}
+		<table>
+		<tr>
+			<td>{{ matchup.teamonescore }}</td>
+			<td>{{ matchup.teamone }}</td>
+		</tr>
+		<tr>
+			<td>{{ matchup.teamtwoscore }}</td>
+			<td>{{ matchup.teamtwo }}</td>
+		</tr>
+		</table>
+		<div>&nbsp;</div>
+	{% endfor %}
+</div>
+<div style="width: 30px; float: left;">&nbsp;</div>
+{% endfor %}
+</div>
