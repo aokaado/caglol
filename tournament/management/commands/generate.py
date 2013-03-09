@@ -19,4 +19,5 @@ class Command(BaseCommand):
 
         tournament.generate()
         tournament.generated = True
+        tournament.save()
         self.stdout.write('Successfully generated tournamet matchups for "%s"' % tournament_id)

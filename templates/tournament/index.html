@@ -3,7 +3,7 @@
 {% block header %}{% endblock %}
 {% block content %}
 
-<div id="tournament_carousel" class="tournament slide">
+<div id="tournament_carousel" class="carousel slide">
   <ol class="carousel-indicators">
   	{% for tournament in tournaments %}
     <li data-target="#tournament_carousel" data-slide-to="{{ forloop.counter|add:-1 }}"></li>
@@ -22,16 +22,9 @@
   	{% endfor %}
   </div>
   <!-- Carousel nav -->
-  <a class="carousel-control left" href="#league_carousel" data-slide="prev">&lsaquo;</a>
-  <a class="carousel-control right" href="#league_carousel" data-slide="next">&rsaquo;</a>
+  <a class="carousel-control left" href="#tournament_carousel" data-slide="prev">&lsaquo;</a>
+  <a class="carousel-control right" href="#tournament_carousel" data-slide="next">&rsaquo;</a>
 </div>
-<!--
-	<ul>
-	{% for tournament in tournaments %}
-		<li><a href="/tournament/{{ tournament.id }}/">{{ tournament.name }}</a></li>
-	{% endfor %}
-	</ul>
--->
 
 {% endblock %}
 {% block scripts %}
