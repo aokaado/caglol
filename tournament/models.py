@@ -5,6 +5,7 @@ from league.models import Team
 from datetime import datetime
 from smart_selects.db_fields import ChainedForeignKey
 from tournament.utils import pow2roundup
+from random import shuffle
 
 
 # TODO perhaps make a "match" superclass
@@ -56,6 +57,22 @@ class Matchup(models.Model):
 
     def apply_results(self):
         if self.has_winner():
+            if self.tier == self.tournament.tiers and self.winner == self.teamtwo and self.seedsto is None:
+                # If this is the superfinal in a double elim, and loserbracket team won
+                superfinal_2 = Matchup()
+                superfinal_2.level = 'w'
+                superfinal_2.tournament = self
+                superfinal_2.tier = self.tier + 1
+                superfinal_2.date = None
+                superfinal_2.number = (0)
+                superfinal_2.teamone = self.teamone
+                superfinal_2.teamtwo = self.teamtwo
+                superfinal_2.save()
+
+                self.seedsto = superfinal_2
+                self.seedsto_loser = superfinal_2
+                self.save()
+
             if self.tier < self.tournament.tiers-1:
 
                 if self.number % 2:
@@ -120,8 +137,13 @@ class Tournament(models.Model):
     generated = models.BooleanField(default=False)
 
     def randomize_seeds(self):
-        #NYI
-        None
+        teams = Participant.objects.filter(tournament=self)
+        num = len(teams)
+        seeds = range(num)
+        shuffle(seeds)
+        for team in teams:
+            team.seed = seeds.pop()
+            team.save()
 
     def generate(self):
         matchups = []
@@ -148,7 +170,7 @@ class Tournament(models.Model):
                 matchup.number = (i)
                 matchups.append(matchup)
                 matchup.save()
-                print "adding " + matchup.__unicode__()
+                #print "adding " + matchup.__unicode__()
 
             print ""
             num_tier = num_tierone
@@ -170,7 +192,7 @@ class Tournament(models.Model):
                     matchups[off + i * 2 + 1].seedsto = next_matchup
                     matchups[off + i * 2 + 1].save()
                     matchups.append(next_matchup)
-                    print "adding " + next_matchup.__unicode__()
+                    #print "adding " + next_matchup.__unicode__()
 
                 off = len(matchups)-num_tier
                 print ""
@@ -191,7 +213,7 @@ class Tournament(models.Model):
                 matchups[i * 2 + 1].seedsto_loser = matchup
                 matchups[i * 2 + 1].save()
                 lmatchups.append(matchup)
-                print "adding " + matchup.__unicode__()
+                #print "adding " + matchup.__unicode__()
 
             num_tier = num_tierone//2
             off = 0
@@ -200,7 +222,7 @@ class Tournament(models.Model):
             while num_tier > 1:
                 losers = num_tier
                 winners = int(pow(2, tiers-tier-1))
-                print "losers", losers, "winners", winners, "tier", tier
+                #print "losers", losers, "winners", winners, "tier", tier
                 if winners < losers:
                     midtier = losers//2
                     # print "midtier"
@@ -221,7 +243,7 @@ class Tournament(models.Model):
                         lmatchups[off + i * 2 + 1].seedsto = next_matchup
                         lmatchups[off + i * 2 + 1].save()
 
-                        print "adding " + str(len(lmatchups)-1) + " " + next_matchup.__unicode__()
+                        #print "adding " + str(len(lmatchups)-1) + " " + next_matchup.__unicode__()
                     num_tier = midtier
 
                 else:
@@ -245,13 +267,12 @@ class Tournament(models.Model):
                         lmatchups[off + i].seedsto = next_matchup
                         lmatchups[off + i].save()
 
-                        print "adding " + str(len(lmatchups)-1) + " " + next_matchup.__unicode__()
+                        #print "adding " + str(len(lmatchups)-1) + " " + next_matchup.__unicode__()
                     woff += winners
                     tier += 1
                     num_tier = mergetier
 
                 off = len(lmatchups)-num_tier
-                print ""
 
             superfinal = Matchup()
             superfinal.level = 'w'
@@ -260,7 +281,7 @@ class Tournament(models.Model):
             superfinal.date = None
             superfinal.number = (0)
             superfinal.save()
-            print "adding superfinal " + superfinal.__unicode__()
+            #print "adding superfinal " + superfinal.__unicode__()
 
             matchups[-1].seedsto = superfinal
             matchups[-1].seedsto_loser = lmatchups[-1]
