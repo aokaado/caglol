@@ -25,6 +25,31 @@
 		{% endfor %}
 	</div>
 	{% endfor %}
+	</div>
+
+	<div class="row">
+	{% for tier in lmatchups %}
+	<div class="span2">
+		
+		{% for i in forloop.counter|get_range_l %}
+			<div class="row"><div class="span1">&nbsp;</div></div>
+		{% endfor %}
+
+		{% for matchup in tier %}
+			<table class="table table-bordered table-condensed">
+			<tr class="teamrow" alt="{{ matchup.teamone.id }}">
+				<td>{{ matchup.teamonescore }}</td>
+				<td>{{ matchup.teamone }}</td>
+			</tr>
+			<tr class="teamrow" alt="{{ matchup.teamtwo.id }}">
+				<td>{{ matchup.teamtwoscore }}</td>
+				<td>{{ matchup.teamtwo }}</td>
+			</tr>
+			</table>
+		{% endfor %}
+	</div>
+	{% endfor %}
+	</div>
 {% endblock %}
 {% block scripts %}
 <script type="text/javascript">

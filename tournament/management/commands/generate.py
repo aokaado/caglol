@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from tournament.models import Tournament
+from tournament.models import Tournament, Matchup
 
 
 class Command(BaseCommand):
@@ -13,11 +13,14 @@ class Command(BaseCommand):
             raise CommandError('Invalid argument')
 
         try:
+            c = Matchup.objects.filter(tournament=tournament_id).count()
+            if c > 0:
+                self.stdout.write('Deleting %s old matchups\n' % c)
+                Matchup.objects.filter(tournament=tournament_id).delete()
+
             tournament = Tournament.objects.get(pk=int(tournament_id))
         except Tournament.DoesNotExist:
             raise CommandError('Tournamet "%s" does not exist' % tournament_id)
 
         tournament.generate()
-        tournament.generated = True
-        tournament.save()
-        self.stdout.write('Successfully generated tournamet matchups for "%s"' % tournament_id)
+        self.stdout.write('Successfully generated tournamet matchups for: %s\n' % tournament.name)
