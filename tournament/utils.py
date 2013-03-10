@@ -7,12 +7,12 @@ def create_tiered_list(flat_list):
         m = flat_list.pop(0)
         if m in list2:
             continue
-        if m.seedsto is not None:
+        if m.seedsto is not None and m.seedsto.level == m.level:
             flat_list.append(m.seedsto)
         list2.append(m)
 
     tier_list = []
-    ctier = 0
+    ctier = list2[0].tier
     arr = []
     while(len(list2) > 0):
         m = list2.pop(0)

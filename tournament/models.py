@@ -1,6 +1,6 @@
 from __future__ import division
 from django.db import models
-from math import ceil, log, pow
+from math import ceil, floor, log, pow
 from league.models import Team
 from datetime import datetime
 from smart_selects.db_fields import ChainedForeignKey
@@ -57,12 +57,12 @@ class Matchup(models.Model):
 
     def apply_results(self):
         if self.has_winner():
-            if self.tier == self.tournament.tiers and self.winner == self.teamtwo and self.seedsto is None:
+            if ceil(self.tier) == self.tournament.tiers and self.winner == self.teamtwo and self.seedsto is None:
                 # If this is the superfinal in a double elim, and loserbracket team won
+                print "making superfinal2"
                 superfinal_2 = Matchup()
-                superfinal_2.level = 'w'
-                superfinal_2.tournament = self
-                superfinal_2.tier = self.tier + 1
+                superfinal_2.tournament = self.tournament
+                superfinal_2.tier = self.tier + 1.5
                 superfinal_2.date = None
                 superfinal_2.number = (0)
                 superfinal_2.teamone = self.teamone
@@ -73,26 +73,35 @@ class Matchup(models.Model):
                 self.seedsto_loser = superfinal_2
                 self.save()
 
-            if self.tier < self.tournament.tiers-1:
+            t_type = self.tournament.t_type
+            print self.__unicode__()
+            if self.tier < self.tournament.tiers-1 or (int(self.tier) == self.tournament.tiers-1 and t_type == 'd'):
 
-                if self.number % 2:
-                    self.seedsto.teamtwo = self.winner
-                else:
-                    self.seedsto.teamone = self.winner
-                self.seedsto.save()
+                # Winnerbracket matches and midtiers in loserbracket
+                if t_type == 's' or (t_type == 'd' and self.level == 'w') or (t_type == 'd' and ceil(self.seedsto.tier)-floor(self.seedsto.tier) == 0):
+                    print "promote one either"
+                    if self.number % 2:
+                        self.seedsto.teamtwo = self.winner
+                    else:
+                        self.seedsto.teamone = self.winner
+                    self.seedsto.save()
 
-                if self.tournament.t_type == 'd' and self.level == 'w':
+                # Demote to loserbracket
+                if t_type == 'd' and self.level == 'w':
+                    print "demote"
                     if self.number % 2 and self.tier == 0:
                         self.seedsto_loser.teamtwo = self.loser
                     else:
                         self.seedsto_loser.teamone = self.loser
                     self.seedsto_loser.save()
 
-                if self.tournament.t_type == 'd' and self.level == 'l':
+                # Promote in loserbracket
+                if t_type == 'd' and self.level == 'l':
+                    print "promote one teamtwo"
                     self.seedsto.teamtwo = self.winner
                     self.seedsto.save()
 
-                if (self.tournament.t_type == 'd' and self.level == 'l') or self.tournament.t_type == 's':
+                if (t_type == 'd' and self.level == 'l') or t_type == 's':
                     try:
                         p = Participant.objects.get(tournament=self.tournament, team=self.loser)
                         p.placement = pow(2, self.tournament.tiers - self.tier)  # TODO make accurate
@@ -173,7 +182,7 @@ class Tournament(models.Model):
                 matchup.save()
                 #print "adding " + matchup.__unicode__()
 
-            print ""
+            #print ""
             num_tier = num_tierone
             off = 0
             tier = 0
@@ -196,9 +205,9 @@ class Tournament(models.Model):
                     #print "adding " + next_matchup.__unicode__()
 
                 off = len(matchups)-num_tier
-                print ""
+                #print ""
 
-        # Add loserbracket matches if double elim NYI
+        # Add loserbracket matches if double elim
         if self.t_type == 'd':
             lmatchups = []
             for i in range(num_tierone//2):
@@ -278,7 +287,7 @@ class Tournament(models.Model):
             superfinal = Matchup()
             superfinal.level = 'w'
             superfinal.tournament = self
-            superfinal.tier = tier + 1
+            superfinal.tier = tier + 0.5
             superfinal.date = None
             superfinal.number = (0)
             superfinal.save()

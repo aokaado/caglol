@@ -56,7 +56,12 @@
 <script type="text/javascript">
 $("tr.teamrow").click(function(){
 	var num = $(this).attr('class');
-	num = num.substring(num.indexOf('team_')+5);
+	var start = num.indexOf('team_')+5;
+	var end = num.indexOf(' ', start);
+	if (end == -1)
+		num = num.substring(start);
+	else
+		num = num.substring(start, end);
 	if (num)
 		window.location = "/team/"+num;
 });
