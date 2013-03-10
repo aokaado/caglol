@@ -57,12 +57,12 @@ class Matchup(models.Model):
 
     def apply_results(self):
         if self.has_winner():
-            if ceil(self.tier) == self.tournament.tiers and self.winner == self.teamtwo and self.seedsto is None:
+            if self.tier == self.tournament.tiers and self.winner == self.teamtwo and self.seedsto is None:
                 # If this is the superfinal in a double elim, and loserbracket team won
                 print "making superfinal2"
                 superfinal_2 = Matchup()
                 superfinal_2.tournament = self.tournament
-                superfinal_2.tier = self.tier + 1.5
+                superfinal_2.tier = self.tier + 0.5
                 superfinal_2.date = None
                 superfinal_2.number = (0)
                 superfinal_2.teamone = self.teamone
@@ -72,14 +72,15 @@ class Matchup(models.Model):
                 self.seedsto = superfinal_2
                 self.seedsto_loser = superfinal_2
                 self.save()
+                return
 
             t_type = self.tournament.t_type
             print self.__unicode__()
             if self.tier < self.tournament.tiers-1 or (int(self.tier) == self.tournament.tiers-1 and t_type == 'd'):
 
                 # Winnerbracket matches and midtiers in loserbracket
-                if t_type == 's' or (t_type == 'd' and self.level == 'w') or (t_type == 'd' and ceil(self.seedsto.tier)-floor(self.seedsto.tier) == 0):
-                    print "promote one either"
+                if t_type == 's' or (t_type == 'd' and self.level == 'w') or (t_type == 'd' and self.level == 'l' and self.seedsto.ismidtier()):
+                    print "promote either"
                     if self.number % 2:
                         self.seedsto.teamtwo = self.winner
                     else:
@@ -96,8 +97,8 @@ class Matchup(models.Model):
                     self.seedsto_loser.save()
 
                 # Promote in loserbracket
-                if t_type == 'd' and self.level == 'l':
-                    print "promote one teamtwo"
+                if t_type == 'd' and self.level == 'l' and not self.seedsto.ismidtier():
+                    print "promote teamtwo"
                     self.seedsto.teamtwo = self.winner
                     self.seedsto.save()
 
@@ -108,6 +109,12 @@ class Matchup(models.Model):
                         p.save()
                     except:
                         None
+
+    def ismidtier(self):
+        return ceil(self.tier) > floor(self.tier)
+
+    def seedstosuper(self):
+        return self.seedsto.tier == self.tournament.tier
 
     def save(self, *args, **kwargs):
         self.apply_results()
@@ -229,13 +236,13 @@ class Tournament(models.Model):
             off = 0
             woff = 0
             tier = 1
-            while num_tier > 1:
+            while num_tier + int(pow(2, tiers-tier-1)) > 1:
                 losers = num_tier
                 winners = int(pow(2, tiers-tier-1))
-                #print "losers", losers, "winners", winners, "tier", tier
+                print "losers", losers, "winners", winners, "tier", tier
                 if winners < losers:
                     midtier = losers//2
-                    # print "midtier"
+                    print "midtier"
                     for i in range(midtier):
 
                         next_matchup = Matchup()
@@ -253,12 +260,12 @@ class Tournament(models.Model):
                         lmatchups[off + i * 2 + 1].seedsto = next_matchup
                         lmatchups[off + i * 2 + 1].save()
 
-                        #print "adding " + str(len(lmatchups)-1) + " " + next_matchup.__unicode__()
+                        print "adding " + str(len(lmatchups)-1) + " " + next_matchup.__unicode__()
                     num_tier = midtier
 
                 else:
-                    #print "mergetier"
-                    mergetier = losers//2 + winners//2
+                    mergetier = losers//2 + int(ceil(winners/2))
+                    print "mergetier", mergetier
                     for i in range(mergetier):
                         #print "merge", tier, num_tier, i, off
 
@@ -277,7 +284,7 @@ class Tournament(models.Model):
                         lmatchups[off + i].seedsto = next_matchup
                         lmatchups[off + i].save()
 
-                        #print "adding " + str(len(lmatchups)-1) + " " + next_matchup.__unicode__()
+                        print "adding " + str(len(lmatchups)-1) + " " + next_matchup.__unicode__()
                     woff += winners
                     tier += 1
                     num_tier = mergetier
@@ -287,7 +294,7 @@ class Tournament(models.Model):
             superfinal = Matchup()
             superfinal.level = 'w'
             superfinal.tournament = self
-            superfinal.tier = tier + 0.5
+            superfinal.tier = tier
             superfinal.date = None
             superfinal.number = (0)
             superfinal.save()
