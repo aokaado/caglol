@@ -145,6 +145,7 @@ class Tournament(models.Model):
             team.seed = seeds.pop()
             team.save()
 
+    # TODO autopromote teams in a matchup with "None", and propagate matchups that have two "None" in them
     def generate(self):
         matchups = []
         if self.t_type == 'd' or self.t_type == 's':

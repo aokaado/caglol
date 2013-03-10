@@ -18,10 +18,18 @@ def create_tiered_list(flat_list):
         m = list2.pop(0)
         if not m.tier == ctier:
             ctier = m.tier
-            tier_list.append(arr)
+            lastlen = 0 if len(tier_list) == 0 else len(tier_list[-1]['data'])
+            lastdiff = 0 if len(tier_list) == 0 else tier_list[-1]['diff']
+            info = {'data': arr, 'diff': lastdiff + max(lastlen - len(arr), 0), 'tier': ctier}
+            tier_list.append(info)
             arr = []
         arr.append(m)
-    tier_list.append(arr)
+
+    lastlen = 0 if len(tier_list) == 0 else len(tier_list[-1]['data'])
+    lastdiff = 0 if len(tier_list) == 0 else tier_list[-1]['diff']
+    info = {'data': arr, 'diff':  lastdiff + lastlen - len(arr), 'tier': ctier}
+    tier_list.append(info)
+
     return tier_list
 
 
