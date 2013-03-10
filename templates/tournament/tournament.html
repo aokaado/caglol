@@ -14,11 +14,11 @@
 
 		{% for matchup in tier|get_dict_val:'data' %}
 			<table class="table table-bordered table-condensed">
-			<tr class="teamrow" alt="{{ matchup.teamone.id }}">
+			<tr class="teamrow team_{{ matchup.teamone.id }}">
 				<td>{{ matchup.teamonescore }}</td>
 				<td>{{ matchup.teamone }}</td>
 			</tr>
-			<tr class="teamrow" alt="{{ matchup.teamtwo.id }}">
+			<tr class="teamrow team_{{ matchup.teamtwo.id }}">
 				<td>{{ matchup.teamtwoscore }}</td>
 				<td>{{ matchup.teamtwo }}</td>
 			</tr>
@@ -38,11 +38,11 @@
 
 		{% for matchup in tier|get_dict_val:'data' %}
 			<table class="table table-bordered table-condensed">
-			<tr class="teamrow" alt="{{ matchup.teamone.id }}">
+			<tr class="teamrow team_{{ matchup.teamone.id }}">
 				<td>{{ matchup.teamonescore }}</td>
 				<td>{{ matchup.teamone }}</td>
 			</tr>
-			<tr class="teamrow" alt="{{ matchup.teamtwo.id }}">
+			<tr class="teamrow team_{{ matchup.teamtwo.id }}">
 				<td>{{ matchup.teamtwoscore }}</td>
 				<td>{{ matchup.teamtwo }}</td>
 			</tr>
@@ -55,14 +55,37 @@
 {% block scripts %}
 <script type="text/javascript">
 $("tr.teamrow").click(function(){
-	var num = $(this).attr('alt');
+	var num = $(this).attr('class');
+	num = num.substring(num.indexOf('team_')+5);
 	if (num)
 		window.location = "/team/"+num;
 });
 $("tr.teamrow").hover(function() {
-    $(this).css('cursor','pointer');
+	var num = $(this).attr('class');
+	var start = num.indexOf('team_')+5;
+	var end = num.indexOf(' ', start);
+	if (end == -1)
+		num = num.substring(start);
+	else
+		num = num.substring(start, end);
+	if (num)
+	{
+		$(".team_"+num).addClass('info');
+    	$(this).css('cursor','pointer');
+    }
 }, function() {
-    $(this).css('cursor','auto');
+	var num = $(this).attr('class');
+	var start = num.indexOf('team_')+5;
+	var end = num.indexOf(' ', start);
+	if (end == -1)
+		num = num.substring(start);
+	else
+		num = num.substring(start, end);
+	if (num)
+	{
+		$(".team_"+num).removeClass('info');
+	    $(this).css('cursor','auto');
+	}
 });
 </script>
 {% endblock %}
