@@ -17,10 +17,10 @@ def create_tiered_list(flat_list):
     while(len(list2) > 0):
         m = list2.pop(0)
         if not m.tier == ctier:
-            ctier = m.tier
             lastlen = 0 if len(tier_list) == 0 else len(tier_list[-1]['data'])
             lastdiff = 0 if len(tier_list) == 0 else tier_list[-1]['diff']
             info = {'data': arr, 'diff': lastdiff + max(lastlen - len(arr), 0), 'tier': ctier}
+            ctier = m.tier
             tier_list.append(info)
             arr = []
         arr.append(m)

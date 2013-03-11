@@ -6,23 +6,26 @@
 	<h4>Winnerbracket</h4>
 	<div class="row">
 	{% for tier in wmatchups %}
-	<div class="span2">
+	<div class="span2" margin-top='50%'>
+		<span class='muted'> {{ tier|get_dict_val:'tier' }} </span>
 		
 		{% for i in tier|get_range_l %}
 			<div class="row"><div class="span1">&nbsp;</div></div>
 		{% endfor %}
-
+		
 		{% for matchup in tier|get_dict_val:'data' %}
+		<div alt="matchup_{{ matchup.id }}">
 			<table class="table table-bordered table-condensed">
-			<tr class="teamrow team_{{ matchup.teamone.id }}">
-				<td>{{ matchup.teamonescore }}</td>
-				<td>{{ matchup.teamone }}</td>
-			</tr>
-			<tr class="teamrow team_{{ matchup.teamtwo.id }}">
-				<td>{{ matchup.teamtwoscore }}</td>
-				<td>{{ matchup.teamtwo }}</td>
-			</tr>
+				<tr>
+					<td>{{ matchup.teamonescore }}</td> 
+					<td class="teamrow team_{{ matchup.teamone.id }}"> <small>{{ matchup.teamone }}</small></td>
+				</tr>
+				<tr>
+					<td>{{ matchup.teamtwoscore }}</td>
+					<td class="teamrow team_{{ matchup.teamtwo.id }}"><small>{{ matchup.teamtwo }}</small></td>
+				</tr>
 			</table>
+		</div>
 		{% endfor %}
 	</div>
 	{% endfor %}
@@ -31,22 +34,25 @@
 	<div class="row">
 	{% for tier in lmatchups %}
 	<div class="span2">
+		<span class='muted'> {{ tier|get_dict_val:'tier' }} </span>
 		
 		{% for i in tier|get_range_l %}
 			<div class="row"><div class="span1">&nbsp;</div></div>
 		{% endfor %}
-
+		
 		{% for matchup in tier|get_dict_val:'data' %}
+		<div>
 			<table class="table table-bordered table-condensed">
-			<tr class="teamrow team_{{ matchup.teamone.id }}">
+			<tr>
 				<td>{{ matchup.teamonescore }}</td>
-				<td>{{ matchup.teamone }}</td>
+				<td class="teamrow team_{{ matchup.teamone.id }}"><small>{{ matchup.teamone }}</small></td>
 			</tr>
-			<tr class="teamrow team_{{ matchup.teamtwo.id }}">
+			<tr >
 				<td>{{ matchup.teamtwoscore }}</td>
-				<td>{{ matchup.teamtwo }}</td>
+				<td class="teamrow team_{{ matchup.teamtwo.id }}"><small>{{ matchup.teamtwo }}</small></td>
 			</tr>
 			</table>
+		</div>
 		{% endfor %}
 	</div>
 	{% endfor %}
@@ -54,41 +60,34 @@
 {% endblock %}
 {% block scripts %}
 <script type="text/javascript">
-$("tr.teamrow").click(function(){
-	var num = $(this).attr('class');
+function get_num(element)
+{
+	var num = $(element).attr('class');
 	var start = num.indexOf('team_')+5;
 	var end = num.indexOf(' ', start);
 	if (end == -1)
 		num = num.substring(start);
 	else
 		num = num.substring(start, end);
+	return num
+}
+$("td.teamrow").click(function(){
+	num = get_num(this);
 	if (num)
 		window.location = "/team/"+num;
 });
-$("tr.teamrow").hover(function() {
-	var num = $(this).attr('class');
-	var start = num.indexOf('team_')+5;
-	var end = num.indexOf(' ', start);
-	if (end == -1)
-		num = num.substring(start);
-	else
-		num = num.substring(start, end);
+$("td.teamrow").hover(function() {
+	num = get_num(this);
 	if (num)
 	{
-		$(".team_"+num).addClass('info');
+		$('td.team_'+num).parent().addClass('info');
     	$(this).css('cursor','pointer');
     }
 }, function() {
-	var num = $(this).attr('class');
-	var start = num.indexOf('team_')+5;
-	var end = num.indexOf(' ', start);
-	if (end == -1)
-		num = num.substring(start);
-	else
-		num = num.substring(start, end);
+	num = get_num(this);
 	if (num)
 	{
-		$(".team_"+num).removeClass('info');
+		$('td.team_'+num).parent().removeClass('info');
 	    $(this).css('cursor','auto');
 	}
 });
