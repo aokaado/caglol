@@ -12,8 +12,13 @@ class StandingsAdmin(admin.ModelAdmin):
     readonly_fields = ('wins', 'losses', 'score')
     actions = [update_standing]
 
+
+class TeamAdmin(admin.ModelAdmin):
+    filter_horizontal = ('player',)
+
+
 admin.site.register(Player)
-admin.site.register(Team)
+admin.site.register(Team, TeamAdmin)
 admin.site.register(Match)
 admin.site.register(League)
 admin.site.register(Standings, StandingsAdmin)

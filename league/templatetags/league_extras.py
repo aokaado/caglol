@@ -20,4 +20,4 @@ def decorate_score(match, team):
             return mark_safe("<span class='label label-success'>%s</span>" % score)
         else:
             return mark_safe("<span class='label label-important'>%s</span>" % score)
-    return mark_safe("<span class='label label-warning'>%s</span>" % score)
+    return mark_safe("<span class='label'>%s</span>" % score)

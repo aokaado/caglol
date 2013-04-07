@@ -31,6 +31,9 @@ class Team(models.Model):
     icon = models.FileField(upload_to="team_icons", max_length=50, null=True)
     player = models.ManyToManyField(Player)
 
+    def player_names(self):
+        return ', '.join([p.name for p in self.player.all()])
+
     def is_valid(self):
         return self.player.count() >= 5
 
@@ -134,7 +137,7 @@ class Standings(models.Model):
     score = models.IntegerField(default=0)
 
     # Should not be neccesary to run this, it's here for initializing the db
-    # and as a backup if the scorecount get's inconsistent
+    # and as a backup if the scorecount becomes inconsistent
     def update(self):
         start = time.clock()
         matches = Match.objects.filter(league=self.league)
@@ -150,7 +153,7 @@ class Standings(models.Model):
         self.calc_score()
         self.save()
         end = time.clock()
-        print "update:"+str(self)+" "+str(end-start)
+        print "updated: "+str(self)+" in "+str(end-start)+" seconds."
 
     def calc_score(self):
         if self.wins == 0:
