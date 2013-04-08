@@ -1,0 +1,38 @@
+{% extends "base.html"  %}
+
+{% block header %}{% endblock %}
+{% block content %}
+
+<div id="tournament_carousel" class="carousel slide">
+  <ol class="carousel-indicators">
+  	{% for tournament in tournaments %}
+    <li data-target="#tournament_carousel" data-slide-to="{{ forloop.counter|add:-1 }}"></li>
+    {% endfor %}
+  </ol>
+  <!-- Carousel items -->
+  <div class="carousel-inner">
+    {% for tournament in tournaments %}
+    <div class="item">
+    	<a href="/tournament/{{ tournament.id }}/"><img src="/media/{{ tournament.splash }}" alt=""/></a>
+        <div class="carousel-caption">
+          <a href="/tournament/{{ tournament.id }}/"><h4>{{ tournament.name }}</h4></a>
+          <p>{{ tournament.flavor }}</p>
+		</div>
+	</div>
+  	{% endfor %}
+  </div>
+  <!-- Carousel nav -->
+  <a class="carousel-control left" href="#tournament_carousel" data-slide="prev">&lsaquo;</a>
+  <a class="carousel-control right" href="#tournament_carousel" data-slide="next">&rsaquo;</a>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script type="text/javascript">
+$("div.carousel-inner div:first-child").addClass('active');
+$("ol.carousel-indicators li:first-child").addClass('active');
+$('.carousel').carousel({
+  interval: 4000
+})
+</script>
+{% endblock %}

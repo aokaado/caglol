@@ -1,0 +1,95 @@
+{% extends "base.html"  %}
+{% load tour_extras %}
+{% block header %}{{ tournament.name }}{% endblock %}
+
+{% block content %}
+	<h4>Winnerbracket</h4>
+	<div class="row">
+	{% for tier in wmatchups %}
+	<div class="span2" margin-top='50%'>
+		<span class='muted'> {{ tier|get_dict_val:'tier' }} </span>
+		
+		{% for i in tier|get_range_l %}
+			<div class="row"><div class="span1">&nbsp;</div></div>
+		{% endfor %}
+		
+		{% for matchup in tier|get_dict_val:'data' %}
+		<div alt="matchup_{{ matchup.id }}">
+			<table class="table table-bordered table-condensed">
+				<tr>
+					<td>{{ matchup.teamonescore }}</td> 
+					<td class="teamrow team_{{ matchup.teamone.id }}"> <small>{{ matchup.teamone }}</small></td>
+				</tr>
+				<tr>
+					<td>{{ matchup.teamtwoscore }}</td>
+					<td class="teamrow team_{{ matchup.teamtwo.id }}"><small>{{ matchup.teamtwo }}</small></td>
+				</tr>
+			</table>
+		</div>
+		{% endfor %}
+	</div>
+	{% endfor %}
+	</div>
+	<h4>Loserbracket</h4>
+	<div class="row">
+	{% for tier in lmatchups %}
+	<div class="span2">
+		<span class='muted'> {{ tier|get_dict_val:'tier' }} </span>
+		
+		{% for i in tier|get_range_l %}
+			<div class="row"><div class="span1">&nbsp;</div></div>
+		{% endfor %}
+		
+		{% for matchup in tier|get_dict_val:'data' %}
+		<div>
+			<table class="table table-bordered table-condensed">
+			<tr>
+				<td>{{ matchup.teamonescore }}</td>
+				<td class="teamrow team_{{ matchup.teamone.id }}"><small>{{ matchup.teamone }}</small></td>
+			</tr>
+			<tr >
+				<td>{{ matchup.teamtwoscore }}</td>
+				<td class="teamrow team_{{ matchup.teamtwo.id }}"><small>{{ matchup.teamtwo }}</small></td>
+			</tr>
+			</table>
+		</div>
+		{% endfor %}
+	</div>
+	{% endfor %}
+	</div>
+{% endblock %}
+{% block scripts %}
+<script type="text/javascript">
+function get_num(element)
+{
+	var num = $(element).attr('class');
+	var start = num.indexOf('team_')+5;
+	var end = num.indexOf(' ', start);
+	if (end == -1)
+		num = num.substring(start);
+	else
+		num = num.substring(start, end);
+	return num
+}
+$("td.teamrow").click(function(){
+	num = get_num(this);
+	if (num)
+		window.location = "/team/"+num;
+});
+$("td.teamrow").hover(function() {
+	num = get_num(this);
+	if (num)
+	{
+		$('td.team_'+num).parent().addClass('info');
+    	$(this).css('cursor','pointer');
+    }
+}, function() {
+	num = get_num(this);
+	if (num)
+	{
+		$('td.team_'+num).parent().removeClass('info');
+	    $(this).css('cursor','auto');
+	}
+});
+</script>
+{% endblock %}
