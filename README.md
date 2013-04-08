@@ -8,11 +8,7 @@
 * Design
 
 ## Issues ##
-* Improve update for match, simplify to always redo the results, currently changing the teams in an edit will mess up scores
-* Link Round Robin in Tournament with League
-* Improve seeding in Tournament
-* Autopromote teams in a matchup with "None", and propagate matchups that have two "None" in them
-* Perhaps make a "Match" superclass, for Match in league and Matchup in Tourmante
+Look in github issues section
 
 ## Requirements ##
 

@@ -97,8 +97,8 @@ class Match(models.Model):
             return
 
         if oldscore.has_winner():
-            if self.has_winner() and oldscore.winner == self.winner:
-                # Same winner
+            if self.has_winner() and oldscore.winner == self.winner and oldscore.loser == self.loser:
+                # Same winner and loser
                 None
             else:
                 # Revert last then add new if there was a winner
