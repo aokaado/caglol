@@ -3,6 +3,7 @@ dbpw.py
 *.orig
 *.pyc
 *.rej
+*.db
 .installed.cfg
 __minitage__*
 bin/*
