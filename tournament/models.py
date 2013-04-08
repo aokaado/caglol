@@ -149,6 +149,7 @@ class Tournament(models.Model):
     flavor = models.TextField(default="")
     splash = models.FileField(upload_to="tournaments", default="tournaments/default.png")
     t_type = models.CharField(max_length=1, choices=TYPES, default='d')
+    n_winners = models.IntegerField(default=1)
     tiers = models.IntegerField(default=0)
     generated = models.BooleanField(default=False)
 
@@ -164,6 +165,8 @@ class Tournament(models.Model):
     # TODO autopromote teams in a matchup with "None", and propagate matchups that have two "None" in them
     def generate(self):
         matchups = []
+        winners = self.n_winners if self.t_type == 's' else ceil(self.n_winners/2)
+        l_winners = self.n_winners - winners
         if self.t_type == 'd' or self.t_type == 's':
             teams = list(Participant.objects.filter(tournament=self).order_by('seed'))
             num = len(teams)
@@ -193,7 +196,7 @@ class Tournament(models.Model):
             num_tier = num_tierone
             off = 0
             tier = 0
-            while num_tier > 1:
+            while num_tier > winners:
                 num_tier //= 2
                 tier += 1
                 for i in range(num_tier):
@@ -236,7 +239,7 @@ class Tournament(models.Model):
             off = 0
             woff = 0
             tier = 1
-            while num_tier + int(pow(2, tiers-tier-1)) > 1:
+            while num_tier + int(pow(2, tiers-tier-1)) > l_winners:
                 losers = num_tier
                 winners = int(pow(2, tiers-tier-1))
                 print "losers", losers, "winners", winners, "tier", tier
@@ -291,20 +294,21 @@ class Tournament(models.Model):
 
                 off = len(lmatchups)-num_tier
 
-            superfinal = Matchup()
-            superfinal.level = 'w'
-            superfinal.tournament = self
-            superfinal.tier = tier
-            superfinal.date = None
-            superfinal.number = (0)
-            superfinal.save()
-            #print "adding superfinal " + superfinal.__unicode__()
+            if winners == 1:
+                superfinal = Matchup()
+                superfinal.level = 'w'
+                superfinal.tournament = self
+                superfinal.tier = tier
+                superfinal.date = None
+                superfinal.number = (0)
+                superfinal.save()
+                #print "adding superfinal " + superfinal.__unicode__()
 
-            matchups[-1].seedsto = superfinal
-            matchups[-1].seedsto_loser = lmatchups[-1]
-            matchups[-1].save()
-            lmatchups[-1].seedsto = superfinal
-            lmatchups[-1].save()
+                matchups[-1].seedsto = superfinal
+                matchups[-1].seedsto_loser = lmatchups[-1]
+                matchups[-1].save()
+                lmatchups[-1].seedsto = superfinal
+                lmatchups[-1].save()
 
             for m in lmatchups:
                 if m.seedsto is None:
