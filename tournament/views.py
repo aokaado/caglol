@@ -1,10 +1,10 @@
 from tournament.models import Tournament, Matchup
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, get_object_or_404
 from utils import create_tiered_list
 
 
 def tournament(request, tournament_id=1):
-    tournament = Tournament.objects.get(pk=tournament_id)
+    tournament = get_object_or_404(Tournament, pk=tournament_id)
     wm = list(Matchup.objects.filter(tournament=tournament_id, tier=0, level='w').order_by('level', 'tier', 'number'))
     wmatchups = create_tiered_list(wm)
 
@@ -18,5 +18,5 @@ def tournament(request, tournament_id=1):
 
 
 def tournaments(request):
-    tournaments = Tournament.objects.all()
+    tournaments = Tournament.objects.filter(generated=True)
     return render_to_response('tournament/index.html', {'tournaments': tournaments})
