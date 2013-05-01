@@ -124,6 +124,7 @@ class League(models.Model):
     short = models.CharField(max_length=10)
     flavor = models.TextField()
     splash = models.FileField(upload_to="leagues", default="leagues/default.png")
+    bestof = models.IntegerField(default=1)
 
     def __unicode__(self):
         return self.name
